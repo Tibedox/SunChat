@@ -51,6 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:contentDescription="Send"
+            android:onClick="sendMessage"
             app:srcCompat="@android:drawable/ic_menu_send" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
