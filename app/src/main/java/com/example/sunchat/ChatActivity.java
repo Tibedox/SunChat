@@ -2,6 +2,7 @@ package com.example.sunchat;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -30,6 +31,11 @@ public class ChatActivity extends AppCompatActivity {
     ImageButton buttonSendMessage;
     List<DataFromDB> db = new ArrayList<>();
     List<String> messages = new ArrayList<>();
+    private Handler handler = new Handler();
+    private Runnable runnable;
+    Retrofit retrofit;
+    ChatAPI api;
+    int numMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +53,34 @@ public class ChatActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView);
         editMessage = findViewById(R.id.editMessage);
         buttonSendMessage = findViewById(R.id.buttonSendMessage);
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl("https://sch120.ru")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        api = retrofit.create(ChatAPI.class);
+
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                loadFromInternetDB();
+                update();
+                handler.postDelayed(this, 1000);
+            }
+        };
+
+        handler.post(runnable);
+    }
+
+    void update(){
+        if(numMessages<db.size()){
+            messages.clear();
+            for(DataFromDB a:db) messages.add(a.name+"   "+a.created+"\n"+a.message);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, messages);
+            listView.setAdapter(adapter);
+            scrollDown();
+            numMessages=db.size();
+        }
     }
 
     public void sendMessage(View view) {
@@ -56,20 +90,11 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void sendToInternetDB(String message){
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://sch120.ru")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        ChatAPI api = retrofit.create(ChatAPI.class);
         Call<List<DataFromDB>> call = api.sendQuery(name, message);
         call.enqueue(new Callback<List<DataFromDB>>() {
             @Override
             public void onResponse(Call<List<DataFromDB>> call, Response<List<DataFromDB>> response) {
                 db = response.body();
-                messages.clear();
-                for(DataFromDB a:db) messages.add(a.name+"   "+a.created+"\n"+a.message);
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, messages);
-                listView.setAdapter(adapter);
             }
 
             @Override
@@ -80,20 +105,11 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void loadFromInternetDB(){
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://sch120.ru")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        ChatAPI api = retrofit.create(ChatAPI.class);
         Call<List<DataFromDB>> call = api.sendQuery("ask");
         call.enqueue(new Callback<List<DataFromDB>>() {
             @Override
             public void onResponse(Call<List<DataFromDB>> call, Response<List<DataFromDB>> response) {
                 db = response.body();
-                messages.clear();
-                for(DataFromDB a:db) messages.add(a.name+"   "+a.created+"\n"+a.message);
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, messages);
-                listView.setAdapter(adapter);
             }
 
             @Override
@@ -101,5 +117,16 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    void scrollDown(){
+        int lastPosition = listView.getAdapter().getCount() - 1; // Индекс последнего элемента
+        listView.setSelection(lastPosition);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(runnable);
     }
 }
