@@ -7,8 +7,11 @@ appcompat = "1.7.0"
 material = "1.12.0"
 activity = "1.10.1"
 constraintlayout = "2.2.1"
+squareupRetrofitVersion = "2.9.0"
 
 [libraries]
+com-squareup-retrofit2-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "squareupRetrofitVersion" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "squareupRetrofitVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

@@ -39,14 +39,14 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <EditText
-            android:id="@+id/editView"
+            android:id="@+id/editMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_weight="1" />
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/buttonSendMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
