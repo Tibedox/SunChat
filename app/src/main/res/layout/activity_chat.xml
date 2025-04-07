@@ -5,53 +5,42 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="24dp"
     tools:context=".ChatActivity">
 
+    <!-- RecyclerView занимает всё доступное пространство сверху -->
     <ListView
         android:id="@+id/listView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_above="@+id/bottomContainer"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomContainer"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/editMessage"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
-    </ListView>
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@android:layout/simple_list_item_1" />
 
-    <LinearLayout
-        android:id="@+id/bottomContainer"
-        android:layout_width="match_parent"
+    <!-- EditText внизу слева -->
+    <EditText
+        android:id="@+id/editMessage"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:orientation="horizontal"
-        android:padding="0dp"
+        android:layout_marginEnd="8dp"
+        android:hint="@string/message"
+        android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintEnd_toStartOf="@+id/sendButton"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <EditText
-            android:id="@+id/editMessage"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_weight="1" />
+    <!-- ImageButton внизу справа -->
+    <ImageButton
+        android:id="@+id/sendButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/send_message"
+        android:src="@android:drawable/ic_menu_send"
+        android:onClick="sendMessage"
+        app:layout_constraintBottom_toBottomOf="@id/editMessage"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <ImageButton
-            android:id="@+id/buttonSendMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:contentDescription="Send"
-            android:onClick="sendMessage"
-            app:srcCompat="@android:drawable/ic_menu_send" />
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

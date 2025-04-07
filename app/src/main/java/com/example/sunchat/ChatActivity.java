@@ -1,5 +1,6 @@
 package com.example.sunchat;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,11 +33,12 @@ public class ChatActivity extends AppCompatActivity {
     List<DataFromDB> db = new ArrayList<>();
     List<String> messages = new ArrayList<>();
     private Handler handler = new Handler();
-    private Runnable runnable;
+    private Runnable repeatUpdateList;
     Retrofit retrofit;
     ChatAPI api;
-    int numMessages;
+    private int numMessages;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +54,7 @@ public class ChatActivity extends AppCompatActivity {
         name = intent.getStringExtra("name");
         listView = findViewById(R.id.listView);
         editMessage = findViewById(R.id.editMessage);
-        buttonSendMessage = findViewById(R.id.buttonSendMessage);
+        buttonSendMessage = findViewById(R.id.sendButton);
 
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://sch120.ru")
@@ -60,19 +62,19 @@ public class ChatActivity extends AppCompatActivity {
                 .build();
         api = retrofit.create(ChatAPI.class);
 
-        runnable = new Runnable() {
+        repeatUpdateList = new Runnable() {
             @Override
             public void run() {
                 loadFromInternetDB();
-                update();
+                updateList();
                 handler.postDelayed(this, 1000);
             }
         };
 
-        handler.post(runnable);
+        handler.post(repeatUpdateList);
     }
 
-    void update(){
+    void updateList(){
         if(numMessages<db.size()){
             messages.clear();
             for(DataFromDB a:db) messages.add(a.name+"   "+a.created+"\n"+a.message);
@@ -120,13 +122,15 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     void scrollDown(){
-        int lastPosition = listView.getAdapter().getCount() - 1; // Индекс последнего элемента
-        listView.setSelection(lastPosition);
+        int itemCount = listView.getAdapter().getCount();
+        if (itemCount > 0) {
+            listView.setSelection(itemCount - 1);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacks(runnable);
+        handler.removeCallbacks(repeatUpdateList);
     }
 }
