@@ -85,6 +85,7 @@ public class ChatActivity extends AppCompatActivity {
             for(DataFromDB a:db) messages.add(a.name+"   "+a.created+"\n"+a.message);
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, messages);
             listView.setAdapter(adapter);
+            scrollDown();
             numMessages=db.size();
         }
     }
@@ -101,8 +102,6 @@ public class ChatActivity extends AppCompatActivity {
         if(editMessage.getText().toString().isEmpty()) return;
         sendToInternetDB(editMessage.getText().toString());
         editMessage.setText("");
-        updateList();
-        scrollDown();
     }
 
     public void sendToInternetDB(String message){
