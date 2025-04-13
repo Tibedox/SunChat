@@ -50,18 +50,23 @@ public class ChatActivity extends AppCompatActivity {
             return insets;
         });
 
+        // получаем имя из активности MainActivity
         Intent intent = getIntent();
         name = intent.getStringExtra("name");
+
+        // создаём объекты экранных виджетов
         listView = findViewById(R.id.listView);
         editMessage = findViewById(R.id.editMessage);
         buttonSendMessage = findViewById(R.id.sendButton);
 
+        // создаём объекты для обмена с сервером
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://sch120.ru")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         api = retrofit.create(ChatAPI.class);
 
+        // запускаем таймер повторения
         repeatUpdateList = new Runnable() {
             @Override
             public void run() {
@@ -70,18 +75,25 @@ public class ChatActivity extends AppCompatActivity {
                 handler.postDelayed(this, 1000);
             }
         };
-
         handler.post(repeatUpdateList);
     }
 
+    // обновление списка сообщений
     void updateList(){
         if(numMessages<db.size()){
             messages.clear();
             for(DataFromDB a:db) messages.add(a.name+"   "+a.created+"\n"+a.message);
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, messages);
             listView.setAdapter(adapter);
-            scrollDown();
             numMessages=db.size();
+        }
+    }
+
+    // сдвиг списка сообщений к последнему сообщению
+    void scrollDown(){
+        int itemCount = listView.getAdapter().getCount();
+        if (itemCount > 0) {
+            listView.setSelection(itemCount - 1);
         }
     }
 
@@ -89,6 +101,8 @@ public class ChatActivity extends AppCompatActivity {
         if(editMessage.getText().toString().isEmpty()) return;
         sendToInternetDB(editMessage.getText().toString());
         editMessage.setText("");
+        updateList();
+        scrollDown();
     }
 
     public void sendToInternetDB(String message){
@@ -119,13 +133,6 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    void scrollDown(){
-        int itemCount = listView.getAdapter().getCount();
-        if (itemCount > 0) {
-            listView.setSelection(itemCount - 1);
-        }
     }
 
     @Override
