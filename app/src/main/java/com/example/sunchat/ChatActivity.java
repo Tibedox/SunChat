@@ -129,7 +129,6 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<DataFromDB>> call, Throwable t) {
-
             }
         });
     }
